@@ -6,10 +6,12 @@
     <title>QQ-ads</title>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
     <style>
-    html,
-    body {
+    *{
         margin: 0;
         padding: 0;
+    }
+    html,
+    body {
         width: 100%;
         height: 100%;
     }
@@ -74,16 +76,12 @@
 	</div>
    	<script src="js/bscroll.min.js"></script> 
    	<script src="js/jquery-2.0.0.min.js"></script> 
+   	<script src="js/qqads.js"></script> 
    	<script>
    		var radius = 0;
-   		//滚动部分容器高度
-	    var containerHeight = $("#newslist").height();	
-	    //console.log(containerHeight)
-        //与父元素顶部的偏移量
-        var topHeight = $("#ads").position().top;	
-        //console.log(topHeight)
-        //承载图片的自身高度
-        var selfHeight = 220;  
+	    var containerHeight = $("#newslist").height();	//滚动部分容器高度
+        var topHeight = $("#ads").position().top;	//与父元素顶部的偏移量
+        var selfHeight = $("#ads").width() + 20;  //承载图片的自身高度
         var selfWidth = $("#ads").width();
         //承载图片的li元素底部与容器container底部齐平时，已滚动的高度
         var top1 = topHeight + selfHeight - containerHeight;
@@ -91,124 +89,30 @@
         var top2 = topHeight;
         console.log("top1---"+top1);
         console.log("top2---"+top2);
+        
    		var scroll = new BScroll(document.getElementById('newslist'),{probeType:3});
+   		
+   		var currentTopHeight = topHeight
    		scroll.on("scroll",function(pos){
-   			console.log(pos.y)
-   			var delta = -pos.y- top1;
-   			console.log("delta",delta)
-   			if(delta>0 && delta <400){
-   				radius = delta/400*selfWidth;
-   				
-   				myQQ.clearCircle(50,50,radius);
-   			}
+   			console.log("pos.y---"+pos.y)
+   			currentTopHeight = $("#ads").position().top;	//与父元素顶部的偏移量
+   			console.log("currentTopHeight---"+currentTopHeight)
    		})
+   		
+   		
+   		
+// 		scroll.on("scroll",function(pos){
+// 			console.log(pos.y)
+// 			var delta = -pos.y- top1;
+// 			console.log("delta",delta)
+// 			if(delta>0 && delta <400){
+// 				radius = delta/400*selfWidth;
+// 				myQQ.clearCircle(50,50,radius);
+// 			}
+// 		})
+   		
    	</script>
     <script>
-(function(window, document, undefined) {
-    function QQads(settings, callback) {
-        this.cover = null;
-        this.ctx = null;
-        this.wapperDiv = null;
-        this.innerpic = null;
-        this.cHeight = 0;
-        this.cWidth = 0;
-
-        this.opt = {
-            coverImg: '',
-            radius: 1,
-            callback: null
-        };
-
-        this.init(settings, callback);
-    };
-    
-    function _forEach(items, callback) {
-        return Array.prototype.forEach.call(items, function(item, idx) {
-            callback(item, idx);
-        });
-    }
-    
-    function _isCanvasSupported(){
-      var elem = document.createElement('canvas');
-      return !!(elem.getContext && elem.getContext('2d'));
-    }
-    
-    QQads.prototype.createCanvas = function() {
-        this.cover = document.createElement('canvas');
-        this.cover.id = 'cover';
-        this.cover.height = this.cHeight;
-        this.cover.width = this.cWidth;
-        this.ctx = this.cover.getContext('2d');
-        
-        var _this = this;
-        var coverImg = new Image();
-        coverImg.src = this.opt.coverImg;
-        coverImg.onload = function() {
-            _this.ctx.drawImage(coverImg, 0, 0, _this.cover.width, _this.cover.height);
-        }
-        
-        this.wapperDiv.appendChild(this.cover);
-        this.innerpic.style.opacity = 1;
-    }
-    QQads.prototype.clearCircle = function (posX,posY,radius){
-    	this.ctx.beginPath();
-        this.ctx.fillStyle = '#ffffff';
-        this.ctx.globalCompositeOperation = "destination-out";
-        this.ctx.arc(posX, posX, radius, 0, 2 * Math.PI);
-        this.ctx.fill();
-    }
-    
-    QQads.prototype.init = function(settings, callback) {
-        if(!_isCanvasSupported()){
-            alert('对不起，当前浏览器不支持Canvas，无法使用本控件！');
-            return;
-        }
-        var _this = this;
-        _forEach(arguments, function(item) {
-            if (typeof item === "object") {
-                for (var k in item) {
-                    if (k === 'callback' && typeof item[k] === 'function') {
-                        _this.opt.callback = item[k].bind(_this);
-                    } else {
-                        k in _this.opt && (_this.opt[k] = item[k]);
-                    }
-                }
-            } else if (typeof item === "function") {
-                _this.opt.callback = item.bind(_this);
-            }
-        });
-        this.wapperDiv = document.getElementById('wapper');
-        this.innerpic = document.getElementById('innerpic');
-        if (!this.wapperDiv || !this.innerpic) return;
-        this.cHeight = this.innerpic.clientHeight;
-        this.cWidth = this.innerpic.clientWidth;
-        this.innerpic.style.opacity = 0;
-        this.createCanvas();
-//      var timer = setInterval(function(){
-//      	if(_this.opt.radius>=_this.cWidth){
-//      		clearInterval(timer);
-//      		return;
-//      	}
-//      	_this.opt.radius+=10;
-//      	_this.clearCircle(50,50,_this.opt.radius);
-//      },100)
-    };
-    QQads.case = function(settings, callback) {
-        return new QQads(settings, callback);
-    };
-    
-    if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
-        define(function() {
-            return QQads;
-        });
-    } else if (typeof module !== 'undefined' && module.exports) {
-        module.exports = QQads.case;
-        module.exports.QQads = QQads;
-    } else {
-        window.QQads = QQads;
-    }
-
-})(window, document);
 	var myQQ = QQads.case({
         coverImg:'img/demo.jpg'
     });
