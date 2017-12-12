@@ -78,38 +78,37 @@
    	<script src="js/jquery-2.0.0.min.js"></script> 
    	<script src="js/qqads.js"></script> 
    	<script>
-   		var radius = 0;
+   		var radius = 0,
+   			centerX = 50,
+   			centerY = 50;
 	    var containerHeight = $("#newslist").height();	//滚动部分容器高度
         var topHeight = $("#ads").position().top;	//与父元素顶部的偏移量
-        var selfHeight = $("#ads").width() + 20;  //承载图片的自身高度
+        var selfHeight = $("#ads").height()+30;  //承载图片的自身高度
         var selfWidth = $("#ads").width();
         //承载图片的li元素底部与容器container底部齐平时，已滚动的高度
         var top1 = topHeight + selfHeight - containerHeight;
         //承载图片的li元素底部与容器container顶部齐平时，已滚动的高度
-        var top2 = topHeight;
-        console.log("top1---"+top1);
-        console.log("top2---"+top2);
-        
-   		var scroll = new BScroll(document.getElementById('newslist'),{probeType:3});
-   		
-   		var currentTopHeight = topHeight
+        //var top2 = topHeight;
+        //console.log("top1---"+top1);
+        //console.log("top2---"+top2);
+   		var beforeScrollTop = topHeight;
+   		var scroll = new BScroll($('#newslist')[0],{probeType:3});
    		scroll.on("scroll",function(pos){
-   			console.log("pos.y---"+pos.y)
-   			currentTopHeight = $("#ads").position().top;	//与父元素顶部的偏移量
-   			console.log("currentTopHeight---"+currentTopHeight)
+   			var afterScrollTop = pos.y,
+	            delta = afterScrollTop - beforeScrollTop;
+	        if( delta === 0 ) return false;
+	        var range = (-pos.y- top1).toFixed(2);
+   			if(range>=0 && range <400){
+     				console.log("range",range)
+   				radius = range/400*selfWidth;
+   				if(delta<0){
+		        	myQQ.clearCircle(centerX,centerY,radius);
+		       	}else{
+		        	myQQ.recoverCircle(centerX,centerY,radius);
+		        }
+   			}
+	        beforeScrollTop = afterScrollTop;
    		})
-   		
-   		
-   		
-// 		scroll.on("scroll",function(pos){
-// 			console.log(pos.y)
-// 			var delta = -pos.y- top1;
-// 			console.log("delta",delta)
-// 			if(delta>0 && delta <400){
-// 				radius = delta/400*selfWidth;
-// 				myQQ.clearCircle(50,50,radius);
-// 			}
-// 		})
    		
    	</script>
     <script>

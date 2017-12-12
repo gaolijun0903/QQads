@@ -6,7 +6,7 @@
         this.innerpic = null;
         this.cHeight = 0;
         this.cWidth = 0;
-
+		this.imgData = null;
         this.opt = {
             coverImg: '',
             radius: 1,
@@ -16,6 +16,21 @@
         this.init(settings, callback);
     };
     
+    function _calcArea(ctx, callback, ratio) {
+        var pixels = ctx.getImageData(0, 0, this.cWidth, this.cHeight);
+        var indexs = [];
+        _forEach(pixels.data, function(item, i) {
+            var pixel = pixels.data[i + 3];
+            if (pixel === 0) {
+                transPixels.push(i);
+            }
+        });
+
+        if (transPixels.length / pixels.data.length > ratio) {
+            callback && typeof callback === 'function' && callback();
+        }
+    }
+
     function _forEach(items, callback) {
         return Array.prototype.forEach.call(items, function(item, idx) {
             callback(item, idx);
@@ -39,17 +54,23 @@
         coverImg.src = this.opt.coverImg;
         coverImg.onload = function() {
             _this.ctx.drawImage(coverImg, 0, 0, _this.cover.width, _this.cover.height);
+            _this.imgData = _this.ctx.getImageData(0, 0, _this.cWidth, _this.cHeight);
         }
-        
         this.wapperDiv.appendChild(this.cover);
         this.innerpic.style.opacity = 1;
     }
-    QQads.prototype.clearCircle = function (posX,posY,radius){
+    //擦除像素
+    QQads.prototype.clearCircle = function (centerX,centerY,radius){
     	this.ctx.beginPath();
         this.ctx.fillStyle = '#ffffff';
         this.ctx.globalCompositeOperation = "destination-out";
-        this.ctx.arc(posX, posY, radius, 0, 2 * Math.PI);
+        this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
         this.ctx.fill();
+    }
+  	//恢复像素
+    QQads.prototype.recoverCircle = function (centerX,centerY,radius){
+    	this.ctx.putImageData(this.imgData,0,0);
+    	this.clearCircle(centerX,centerY,radius)
     }
     
     QQads.prototype.init = function(settings, callback) {
