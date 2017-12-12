@@ -2,12 +2,14 @@
     function QQads(settings, callback) {
         this.cover = null;
         this.ctx = null;
-        this.wapperDiv = null;
-        this.innerpic = null;
+//      this.wapperDiv = null;
+//      this.innerpic = null;
         this.cHeight = 0;
         this.cWidth = 0;
 		this.imgData = null;
         this.opt = {
+        	wapperDiv:null,
+        	innerpic:null,
             coverImg: '',
             radius: 1,
             callback: null
@@ -56,8 +58,8 @@
             _this.ctx.drawImage(coverImg, 0, 0, _this.cover.width, _this.cover.height);
             _this.imgData = _this.ctx.getImageData(0, 0, _this.cWidth, _this.cHeight);
         }
-        this.wapperDiv.appendChild(this.cover);
-        this.innerpic.style.opacity = 1;
+        this.opt.wapperDiv.appendChild(this.cover);
+        this.opt.innerpic.style.opacity = 1;
     }
     //擦除像素
     QQads.prototype.clearCircle = function (centerX,centerY,radius){
@@ -92,12 +94,12 @@
                 _this.opt.callback = item.bind(_this);
             }
         });
-        this.wapperDiv = document.getElementById('wapper');
-        this.innerpic = document.getElementById('innerpic');
-        if (!this.wapperDiv || !this.innerpic) return;
-        this.cHeight = this.innerpic.clientHeight;
-        this.cWidth = this.innerpic.clientWidth;
-        this.innerpic.style.opacity = 0;
+//      this.wapperDiv = document.getElementById('wapper');
+//      this.innerpic = document.getElementById('innerpic');
+        if (!this.opt.wapperDiv || !this.opt.innerpic) return;
+        this.cHeight = this.opt.innerpic.clientHeight;
+        this.cWidth = this.opt.innerpic.clientWidth;
+        this.opt.innerpic.style.opacity = 0;
         this.createCanvas();
     };
     QQads.case = function(settings, callback) {

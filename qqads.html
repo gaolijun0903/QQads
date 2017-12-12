@@ -28,18 +28,15 @@
 		border: 1px solid #CCCCCC;
 		margin-bottom: 5px;
 	}
-    .listitem #wapper {
+	
+	/*这是必须的*/
+    #wapper {
     	position: relative;
         width: 100%;
         height: 100%;
-        border: 1px solid red;
     }
-    .listitem #innerpic {
+    #innerpic {
         height: 100%;
-        font-weight: bold;
-        font-size: 40px;
-        line-height: 100px;
-        text-align: center;
         background: url(img/bg.jpg);
         -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none;
     }
@@ -81,16 +78,12 @@
    		var radius = 0,
    			centerX = 50,
    			centerY = 50;
-	    var containerHeight = $("#newslist").height();	//滚动部分容器高度
-        var topHeight = $("#ads").position().top;	//与父元素顶部的偏移量
-        var selfHeight = $("#ads").height()+30;  //承载图片的自身高度
-        var selfWidth = $("#ads").width();
-        //承载图片的li元素底部与容器container底部齐平时，已滚动的高度
-        var top1 = topHeight + selfHeight - containerHeight;
-        //承载图片的li元素底部与容器container顶部齐平时，已滚动的高度
-        //var top2 = topHeight;
-        //console.log("top1---"+top1);
-        //console.log("top2---"+top2);
+		    containerHeight = $("#newslist").height(),	//滚动部分容器高度
+	        topHeight = $("#ads").position().top,	//与父元素顶部的偏移量
+	        selfHeight = $("#ads").height()+50,  //承载图片的自身高度
+	        selfWidth = $("#ads").width(),
+        	top1 = topHeight + selfHeight - containerHeight;//承载图片的li元素底部与容器container底部齐平时，已滚动的高度
+        
    		var beforeScrollTop = topHeight;
    		var scroll = new BScroll($('#newslist')[0],{probeType:3});
    		scroll.on("scroll",function(pos){
@@ -99,7 +92,7 @@
 	        if( delta === 0 ) return false;
 	        var range = (-pos.y- top1).toFixed(2);
    			if(range>=0 && range <400){
-     				console.log("range",range)
+     				//console.log("range",range)
    				radius = range/400*selfWidth;
    				if(delta<0){
 		        	myQQ.clearCircle(centerX,centerY,radius);
@@ -113,6 +106,8 @@
    	</script>
     <script>
 	var myQQ = QQads.case({
+		wapperDiv:document.getElementById('wapper'),
+        innerpic:document.getElementById('innerpic'),
         coverImg:'img/demo.jpg'
     });
     </script>
