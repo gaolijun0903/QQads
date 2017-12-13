@@ -2,8 +2,6 @@
     function QQads(settings, callback) {
         this.cover = null;
         this.ctx = null;
-//      this.wapperDiv = null;
-//      this.innerpic = null;
         this.cHeight = 0;
         this.cWidth = 0;
 		this.imgData = null;
@@ -14,24 +12,8 @@
             radius: 1,
             callback: null
         };
-
         this.init(settings, callback);
     };
-    
-    function _calcArea(ctx, callback, ratio) {
-        var pixels = ctx.getImageData(0, 0, this.cWidth, this.cHeight);
-        var indexs = [];
-        _forEach(pixels.data, function(item, i) {
-            var pixel = pixels.data[i + 3];
-            if (pixel === 0) {
-                transPixels.push(i);
-            }
-        });
-
-        if (transPixels.length / pixels.data.length > ratio) {
-            callback && typeof callback === 'function' && callback();
-        }
-    }
 
     function _forEach(items, callback) {
         return Array.prototype.forEach.call(items, function(item, idx) {
@@ -49,6 +31,10 @@
         this.cover.id = 'cover';
         this.cover.height = this.cHeight;
         this.cover.width = this.cWidth;
+        this.cover.style.position = "absolute";
+        this.cover.style.top = 0;
+        this.cover.style.left = 0;
+        
         this.ctx = this.cover.getContext('2d');
         
         var _this = this;
@@ -60,6 +46,7 @@
         }
         this.opt.wapperDiv.appendChild(this.cover);
         this.opt.innerpic.style.opacity = 1;
+        this.opt.innerpic.style.background = "url(img/bg.jpg)";
     }
     //擦除像素
     QQads.prototype.clearCircle = function (centerX,centerY,radius){
@@ -94,8 +81,6 @@
                 _this.opt.callback = item.bind(_this);
             }
         });
-//      this.wapperDiv = document.getElementById('wapper');
-//      this.innerpic = document.getElementById('innerpic');
         if (!this.opt.wapperDiv || !this.opt.innerpic) return;
         this.cHeight = this.opt.innerpic.clientHeight;
         this.cWidth = this.opt.innerpic.clientWidth;
