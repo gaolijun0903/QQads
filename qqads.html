@@ -74,15 +74,39 @@
    	<script>
    		var radius = 0,
    			centerX = 50,
-   			centerY = 50;
+   			centerY = 50,
 		    containerHeight = $("#newslist").height(),	//滚动部分容器高度
 	        topHeight = $("#ads").position().top,	//与父元素顶部的偏移量
-	        selfHeight = $("#ads").height()+50,  //承载图片的自身高度
+	        selfHeight = $("#ads").height(),  //承载图片的自身高度
 	        selfWidth = $("#ads").width(),
-        	top1 = topHeight + selfHeight - containerHeight;//承载图片的li元素底部与容器container底部齐平时，已滚动的高度
-        
+        	top1 = topHeight-containerHeight+selfHeight+ 50,  //承载图片的li元素底部与容器container底部齐平时，已滚动的高度
+          	maxRadius = Math.sqrt( Math.pow((selfHeight-50),2) + Math.pow((selfWidth-50),2)).toFixed(0),  //擦除的最大半径
+   			scroll = new BScroll($('#newslist')[0],{probeType:3});
+   			
+   		scroll.on("scroll",function(pos){
+   			var direction =scroll.movingDirectionY;  //该属性需要v1.5.5以上
+	        if( direction === 0 ) return false;
+	        
+	        var range = (-pos.y- top1).toFixed(0);
+			//console.log("range",range)	        
+   			if(range>=0 && range<400){
+   				radius = range/400*maxRadius;
+   				if(direction===1){//向上滚动
+		        	myQQ.clearCircle(centerX,centerY,radius);
+		       	}else if(direction===-1){//向下滚动
+		        	myQQ.recoverCircle(centerX,centerY,radius);
+		        }
+   			}else if(range>400){
+   				centerX = selfWidth-50;
+   				centerY = selfHeight-50;
+   			}else if(range<0){
+   				centerX = 50;
+   				centerY = 50;
+   			}
+   		})
+   		
+   		/*//版本不支持方向的话，自己判断
    		var beforeScrollTop = topHeight;
-   		var scroll = new BScroll($('#newslist')[0],{probeType:3});
    		scroll.on("scroll",function(pos){
    			var afterScrollTop = pos.y,
 	            delta = afterScrollTop - beforeScrollTop;
@@ -98,14 +122,15 @@
 		        }
    			}
 	        beforeScrollTop = afterScrollTop;
-   		})
+   		})*/
    		
    	</script>
     <script>
 	var myQQ = QQads.case({
 		wapperDiv:document.getElementById('wapper'),
         innerpic:document.getElementById('innerpic'),
-        coverImg:'img/demo.jpg'
+        coverImg:'img/avatar.jpeg',
+        bgImg:"img/qiu.jpg"
     });
     </script>
 </body>
