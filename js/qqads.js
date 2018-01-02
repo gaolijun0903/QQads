@@ -9,6 +9,7 @@
         	wapperDiv:null,
         	innerpic:null,
             coverImg: '',
+            bgImg:'',
             radius: 1,
             callback: null
         };
@@ -46,7 +47,6 @@
         }
         this.opt.wapperDiv.appendChild(this.cover);
         this.opt.innerpic.style.opacity = 1;
-        this.opt.innerpic.style.background = "url(img/bg.jpg)";
     }
     //擦除像素
     QQads.prototype.clearCircle = function (centerX,centerY,radius){
@@ -84,6 +84,8 @@
         if (!this.opt.wapperDiv || !this.opt.innerpic) return;
         this.cHeight = this.opt.innerpic.clientHeight;
         this.cWidth = this.opt.innerpic.clientWidth;
+        this.opt.innerpic.style.background = "url("+this.opt.bgImg+")";
+        this.opt.innerpic.style.backgroundSize="100% 100%";
         this.opt.innerpic.style.opacity = 0;
         this.createCanvas();
     };
